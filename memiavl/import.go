@@ -12,8 +12,9 @@ import (
 	"github.com/cosmos/iavl"
 	protoio "github.com/gogo/protobuf/io"
 
-	snapshottypes "github.com/cosmos/cosmos-sdk/snapshots/types"
-	storetypes "github.com/cosmos/cosmos-sdk/store/types"
+	snapshottypes "cosmossdk.io/api/cosmos/store/snapshots/v1"
+	storetypes "cosmossdk.io/api/cosmos/store/v1beta1"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
@@ -51,19 +52,19 @@ loop:
 			}
 			importer = NewTreeImporter(filepath.Join(dir, tmpDir, item.Store.Name), int64(height))
 			defer importer.Close()
-		case *snapshottypes.SnapshotItem_IAVL:
+		case *snapshottypes.SnapshotItem_Iavl:
 			if importer == nil {
 				return snapshottypes.SnapshotItem{}, errors.Wrap(sdkerrors.ErrLogic, "received IAVL node item before store item")
 			}
-			if item.IAVL.Height > math.MaxInt8 {
+			if item.Iavl.Height > math.MaxInt8 {
 				return snapshottypes.SnapshotItem{}, errors.Wrapf(sdkerrors.ErrLogic, "node height %v cannot exceed %v",
-					item.IAVL.Height, math.MaxInt8)
+					item.Iavl.Height, math.MaxInt8)
 			}
 			node := &iavl.ExportNode{
-				Key:     item.IAVL.Key,
-				Value:   item.IAVL.Value,
-				Height:  int8(item.IAVL.Height),
-				Version: item.IAVL.Version,
+				Key:     item.Iavl.Key,
+				Value:   item.Iavl.Value,
+				Height:  int8(item.Iavl.Height),
+				Version: item.Iavl.Version,
 			}
 			// Protobuf does not differentiate between []byte{} as nil, but fortunately IAVL does
 			// not allow nil keys nor nil values for leaf nodes, so we can always set them to empty.
@@ -245,7 +246,7 @@ func updateMetadataFile(dir string, height int64) (returnErr error) {
 		}()
 		storeInfos = append(storeInfos, storetypes.StoreInfo{
 			Name: name,
-			CommitId: storetypes.CommitID{
+			CommitId: &storetypes.CommitID{
 				Version: height,
 				Hash:    snapshot.RootHash(),
 			},

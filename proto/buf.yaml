@@ -6,7 +6,7 @@
 version: v1
 name: buf.build/crypto-org-chain/cronos
 deps:
-  - buf.build/cosmos/cosmos-sdk:8cb30a2c4de74dc9bd8d260b1e75e176
+  - buf.build/cosmos/cosmos-sdk:c23505b037069936e02509e35d69b7e40845e811
   - buf.build/cosmos/cosmos-proto:1935555c206d4afb9e94615dfd0fad31
   - buf.build/cosmos/gogo-proto:34d970b699f84aa382f3c29773a60836
   - buf.build/googleapis/googleapis
