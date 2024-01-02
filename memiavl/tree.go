@@ -119,14 +119,14 @@ func (t *Tree) Copy(cacheSize int) *Tree {
 func (t *Tree) ApplyChangeSet(changeSet iavl.ChangeSet) {
 	for _, pair := range changeSet.Pairs {
 		if pair.Delete {
-			t.remove(pair.Key)
+			t.Remove(pair.Key)
 		} else {
-			t.set(pair.Key, pair.Value)
+			t.Set(pair.Key, pair.Value)
 		}
 	}
 }
 
-func (t *Tree) set(key, value []byte) {
+func (t *Tree) Set(key, value []byte) {
 	if value == nil {
 		// the value could be nil when replaying changes from write-ahead-log because of protobuf decoding
 		value = []byte{}
@@ -137,7 +137,7 @@ func (t *Tree) set(key, value []byte) {
 	}
 }
 
-func (t *Tree) remove(key []byte) {
+func (t *Tree) Remove(key []byte) {
 	_, t.root, _ = removeRecursive(t.root, key, t.version+1, t.cowVersion)
 	if t.cache != nil {
 		t.cache.Remove(key)
